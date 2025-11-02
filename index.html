@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luthier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #000000;
+            --panel-background-color: #0a0a0a;
+            --border-color: #333333;
+            --text-color: #cccccc;
+            --text-muted-color: #777777;
+            --primary-color: #ffffff;
+            --primary-hover-color: #f0f0f0;
+            --active-step-bg: #444444;
+            --active-step-border: #666666;
+            --playing-step-color: #ffffff;
+            --black: #000000;
+            --font-display: 'Share Tech Mono', monospace;
+            --font-body: 'Share Tech Mono', monospace;
+            --font-stencil: 'Share Tech Mono', monospace;
+            --danger-color: #cccccc;
+            --danger-hover-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Digital Grid Background */
+            background-image:
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(to right, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        #root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-transform: uppercase;
+        }
+        
+        @media (min-width: 640px) {
+            h1 {
+                font-size: 6rem;
+            }
+        }
+
+        .control-section-title {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-family: var(--font-stencil);
+            color: var(--text-muted-color);
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .control-section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .app-grid {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        /* Panels and Controls */
+        .industrial-panel {
+            background-color: var(--panel-background-color);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-family: var(--font-stencil);
+            color: var(--text-muted-color);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .form-label-inline {
+            display: inline-block;
+            margin-bottom: 0;
+        }
+        
+        .btn-text {
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0.5rem;
+            color: var(--text-muted-color);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-text:hover:not(:disabled) {
+            color: var(--primary-hover-color);
+        }
+        .btn-text:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            background-color: var(--black);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-checkbox {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary-color);
+            background-color: var(--black);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-range {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        .form-range::-webkit-slider-runnable-track {
+            background: var(--black);
+            border: 1px solid var(--border-color);
+            height: 8px;
+            border-radius: 2px;
+        }
+        .form-range::-moz-range-track {
+            background: var(--black);
+            border: 1px solid var(--border-color);
+            height: 8px;
+            border-radius: 2px;
+        }
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -8px; /* (8px track - 24px thumb) / 2 */
+            background-color: var(--primary-color);
+            height: 1.5rem; /* 24px */
+            width: 0.75rem; /* 12px */
+            border: none;
+            border-radius: 0;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .form-range:hover::-webkit-slider-thumb {
+            background-color: var(--primary-hover-color);
+        }
+        .form-range::-moz-range-thumb {
+            background-color: var(--primary-color);
+            height: 1.5rem;
+            width: 0.75rem;
+            border: none;
+            border-radius: 0;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .form-range:hover::-moz-range-thumb {
+            background-color: var(--primary-hover-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-stencil);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            background-color: var(--primary-hover-color);
+            color: var(--black);
+        }
+        
+        .btn:active:not(:disabled) {
+            transform: translateY(0px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: var(--black);
+        }
+
+        .btn-secondary {
+            /* Uses default .btn styles */
+        }
+
+        .btn-play-postpunk {
+            width: 4.5rem; /* 72px */
+            height: 4.5rem; /* 72px */
+            border-radius: 50%;
+            background-color: var(--black);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-play-postpunk:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: var(--black);
+            border-color: var(--black);
+            transform: scale(1.05);
+        }
+        .btn-play-postpunk.active {
+            background-color: var(--primary-color);
+            color: var(--black);
+            border-color: var(--primary-color);
+        }
+        .btn-play-postpunk.active:hover:not(:disabled) {
+            background-color: var(--primary-hover-color);
+        }
+
+        /* Global Transport Bar */
+        .global-transport-bar {
+            background-color: var(--panel-background-color);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Sequencer */
+        .screenshot-info {
+            padding: 0 0 0.5rem 0;
+            text-align: right;
+            font-family: var(--font-stencil);
+            color: var(--text-muted-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .chord-display-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .chord-display {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: center;
+            font-family: var(--font-stencil);
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .sequencer-grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sequencer-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0.5rem;
+        }
+
+        .sequencer-step {
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border-color);
+            background-color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted-color);
+            font-family: var(--font-body);
+            padding: 0.25rem;
+        }
+
+        .sequencer-step:hover {
+            background-color: #2b2b2b;
+            border-color: #555;
+        }
+        
+        .sequencer-step.active {
+            background-color: var(--active-step-bg);
+            border-color: var(--active-step-border);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .sequencer-step.playing {
+            border-color: var(--playing-step-color);
+            background-color: var(--playing-step-color);
+            color: var(--black);
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--playing-step-color);
+        }
+        
+        .sequencer-step.paused {
+            border-color: var(--playing-step-color);
+            background-color: var(--playing-step-color);
+            color: var(--black);
+            font-weight: bold;
+        }
+
+        .sequencer-step-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .sequencer-select {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: none;
+            color: inherit;
+            text-align: center;
+            font-size: 0.9rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: normal;
+            flex-grow: 1;
+            padding: 0;
+        }
+        
+        .sequencer-select option {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border: none;
+            font-family: var(--font-body);
+        }
+        
+        .sequencer-step.active .sequencer-select {
+             color: var(--primary-color);
+        }
+
+        .sequencer-step.playing .sequencer-select,
+        .sequencer-step.paused .sequencer-select {
+            color: var(--black);
+        }
+
+        .sequencer-gate-fader {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: transparent;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sequencer-gate-fader::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            transition: background-color 0.2s;
+        }
+        .sequencer-gate-fader:hover::-webkit-slider-runnable-track {
+            background: var(--text-muted-color);
+        }
+
+        .sequencer-gate-fader::-moz-range-track {
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            transition: background-color 0.2s;
+        }
+        .sequencer-gate-fader:hover::-moz-range-track {
+            background: var(--text-muted-color);
+        }
+
+        .sequencer-gate-fader::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            border: 1px solid var(--border-color);
+            height: 12px;
+            width: 6px;
+            background: var(--text-muted-color);
+            margin-top: -5px; /* (2px track - 12px thumb) / 2 */
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .sequencer-step.active .sequencer-gate-fader::-webkit-slider-thumb {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .sequencer-step.playing .sequencer-gate-fader::-webkit-slider-thumb,
+        .sequencer-step.paused .sequencer-gate-fader::-webkit-slider-thumb {
+            background: var(--black);
+            border-color: var(--black);
+        }
+
+        .sequencer-gate-fader::-moz-range-thumb {
+            border: 1px solid var(--border-color);
+            height: 12px;
+            width: 6px;
+            background: var(--text-muted-color);
+            border-radius: 0;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .sequencer-step.active .sequencer-gate-fader::-moz-range-thumb {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .sequencer-step.playing .sequencer-gate-fader::-moz-range-thumb,
+        .sequencer-step.paused .sequencer-gate-fader::-moz-range-thumb {
+            background: var(--black);
+            border-color: var(--black);
+        }
+
+
+        .tonal-flavor-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tonal-flavor-control .control-section-title {
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-size: 1.1rem;
+            font-family: var(--font-stencil);
+            color: var(--text-muted-color);
+            letter-spacing: 0.1em;
+        }
+        .tonal-flavor-control .tonal-flavor-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: var(--font-body);
+            color: var(--text-color);
+        }
+
+        .error-panel {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--text-muted-color);
+            background-color: rgba(128, 128, 128, 0.1);
+            color: var(--text-color);
+        }
+        .error-text-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+        .error-text-body {
+            color: var(--text-color);
+            font-family: var(--font-body);
+        }
+
+        .input-minimal {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-stencil);
+            font-size: 2rem;
+            text-align: right;
+            width: 5rem;
+            padding: 0;
+            transition: border-color 0.2s ease-in-out;
+            -moz-appearance: textfield;
+        }
+        .input-minimal::-webkit-outer-spin-button,
+        .input-minimal::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .input-minimal:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "tone": "https://aistudiocdn.com/tone@^15.1.22",
+        "html2canvas": "https://aistudiocdn.com/html2canvas@^1.4.1"
+      }
+    }
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

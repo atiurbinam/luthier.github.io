@@ -1,0 +1,5 @@
+{
+  "name": "Luthier",
+  "description": "Generate a four-chord progression and a 16-step bass sequence for industrial techno by providing a single root note. The app uses the Gemini API to create dark, groovy, and rhythmic patterns suitable for the genre.",
+  "requestFramePermissions": []
+}
